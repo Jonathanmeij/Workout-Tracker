@@ -2,7 +2,17 @@
 module.exports = {
     content: ["./src/**/*.{js,jsx,ts,tsx}"],
     theme: {
-        extend: {},
+        extend: {
+            fontFamily: {
+                inter: ["Inter", "sans-serif"],
+            },
+            maxWidth: {
+                "8xl": "90rem",
+            },
+            colors: {
+                primary: "blue-700",
+            },
+        },
     },
     plugins: [],
 };
