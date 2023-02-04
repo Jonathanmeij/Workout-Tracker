@@ -9,7 +9,7 @@ interface TextInputProps {
     icon?: React.ReactNode;
 }
 
-export default function TextInput({
+export function TextInput({
     className,
     onChange,
     value,
@@ -22,7 +22,7 @@ export default function TextInput({
     return (
         <div className={`relative ${className}`}>
             {icon && (
-                <div className=" absolute top-1/2 left-2 -translate-y-1/2">{icon}</div>
+                <div className="absolute -translate-y-1/2 top-1/2 left-2">{icon}</div>
             )}
             <input
                 className={`${
@@ -34,6 +34,30 @@ export default function TextInput({
                 type={type}
                 name={name}
                 required={required}
+            />
+        </div>
+    );
+}
+
+export function FormikInput({
+    field,
+    label,
+    placeholder,
+    type,
+}: {
+    field: any;
+    label: string;
+    placeholder?: string;
+    type?: string;
+}) {
+    return (
+        <div>
+            <label htmlFor="email">{label}</label>
+            <input
+                type={field.type}
+                {...field}
+                placeholder={placeholder}
+                className="w-full p-2 text-white bg-gray-700 rounded ring-0 focus:outline-none focus:ring-2 focus:ring-blue-600"
             />
         </div>
     );

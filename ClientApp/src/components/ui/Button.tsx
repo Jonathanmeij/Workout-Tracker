@@ -1,17 +1,17 @@
 import { cva, VariantProps } from "class-variance-authority";
 import { Link } from "react-router-dom";
 
-const buttonStyles = cva("rounded", {
+const buttonStyles = cva("rounded text-center border-1", {
     variants: {
         color: {
-            primary: " bg-teal-600 text-white hover:bg-teal-700",
-            secondary: " bg-gray-600 text-white hover:bg-gray-700",
-            none: "bg-transparent hover:bg-gray-100",
+            primary: " bg-blue-600 text-white border-0  hover:bg-blue-700",
+            secondary: " bg-gray-700 text-white border-gray-600 hover:bg-gray-600 ",
+            none: "bg-transparent hover:bg-gray-900 border-0",
             danger: " bg-red-600 text-white hover:bg-red-700",
         },
         padding: {
             none: "p-0",
-            normal: "p-2",
+            normal: "py-2 px-4",
             small: "p-1",
         },
         fullWidth: {
@@ -47,13 +47,8 @@ function Button({
     onMouseOver,
 }: ButtonProps) {
     return to ? (
-        <Link to={to}>
-            <button
-                className={buttonStyles({ color, padding, fullWidth })}
-                onClick={onClick}
-                type={type}
-                onMouseOver={onMouseOver}
-            >
+        <Link to={to} className={buttonStyles({ color, padding, fullWidth })}>
+            <button onClick={onClick} type={type} onMouseOver={onMouseOver}>
                 {children}
             </button>
         </Link>

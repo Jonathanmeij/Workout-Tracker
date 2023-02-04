@@ -5,7 +5,7 @@ import { AuthProvider } from "react-auth-kit";
 
 export default function App() {
     return (
-        <div className=" bg-gray-900 text-white min-h-screen">
+        <div className="min-h-screen text-white bg-gray-900 font-inter">
             <AuthProvider
                 authType="cookie"
                 authName="_auth"

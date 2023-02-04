@@ -8,6 +8,9 @@ import {
     PopperHeader,
     PopperFooter,
 } from "./Popper";
+import Box from "./Box";
+import { TextInput } from "./input/TextInput";
+import { Input } from "./input/Input";
 
 export {
     Card,
@@ -18,4 +21,7 @@ export {
     PopperMenuItems,
     PopperHeader,
     PopperFooter,
+    Box,
+    TextInput,
+    Input,
 };
