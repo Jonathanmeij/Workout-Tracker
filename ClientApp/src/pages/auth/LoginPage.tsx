@@ -11,10 +11,6 @@ export default function LoginPage() {
     } = useForm();
     const onSubmit = (data) => console.log(data);
 
-    console.log(errors.password?.message?.toString());
-    console.log(errors.email?.message?.toString());
-    console.log(errors.name?.message?.toString());
-
     return (
         <CenterCardPage>
             <h1 className="text-2xl font-semibold tracking-tighter">Login</h1>

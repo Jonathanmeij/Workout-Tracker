@@ -1,7 +1,6 @@
 import CenterCardPage from "../CenterCardPage";
 import { useForm } from "react-hook-form";
 import { Input, Button } from "../../components/ui";
-import { Link } from "react-router-dom";
 import { useRef } from "react";
 
 export default function RegisterPage() {
