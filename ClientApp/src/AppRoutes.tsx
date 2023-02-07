@@ -1,6 +1,8 @@
 import HomePage from "./pages/home/HomePage";
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
+import WorkoutPage from "./pages/workout/WorkoutPage";
+import ExercisePage from "./pages/exercise/ExercisePage";
 
 const AppRoutes = [
     {
@@ -14,6 +16,14 @@ const AppRoutes = [
     {
         path: "/register",
         element: <RegisterPage />,
+    },
+    {
+        path: "/workout/:id",
+        element: <WorkoutPage />,
+    },
+    {
+        path: "/workout/:id/:exerciseId",
+        element: <ExercisePage />,
     },
 ];
 

@@ -12,6 +12,7 @@ import Box from "./Box";
 import { TextInput } from "./input/TextInput";
 import { Input } from "./input/Input";
 import { Modal, ModalBody, ModalFooter, ModalHeader } from "./Modal";
+import Divider from "./Divider";
 
 export {
     Card,
@@ -29,4 +30,5 @@ export {
     ModalBody,
     ModalFooter,
     ModalHeader,
+    Divider,
 };

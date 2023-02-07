@@ -7,12 +7,15 @@ import {
     ModalHeader,
     ModalBody,
     Input,
+    ModalFooter,
 } from "../../components/ui";
 import ArrowForwardIosOutlinedIcon from "@mui/icons-material/ArrowForwardIosOutlined";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import Divider from "../../components/ui/Divider";
+import TextCard from "../../components/TextCard";
 
 export default function Home() {
     const ingelogd = true;
@@ -55,6 +58,7 @@ function HomeIngelogd() {
                             Username
                         </span>
                     </h1>
+                    <Divider />
                     <Card className="w-full max-w-lg">
                         <Box className="flex flex-col justify-center w-full gap-4">
                             <h2 className="text-xl font-semibold ">Statistics</h2>
@@ -91,11 +95,12 @@ function WorkoutCardContainer() {
             <div className="flex flex-col gap-3">
                 {workouts.map((workout) => (
                     <Link key={workout.id} to={`/workout/${workout.id}`}>
-                        <WorkoutCard>{workout.name}</WorkoutCard>
+                        <TextCard>{workout.name}</TextCard>
                     </Link>
                 ))}
             </div>
-            {isOpen && <AddWorkoutModal isOpen={isOpen} setisOpen={setisOpen} />}
+
+            <AddWorkoutModal isOpen={isOpen} setisOpen={setisOpen} />
         </>
     );
 }
@@ -119,49 +124,39 @@ function AddWorkoutModal({
             <form>
                 <ModalHeader>Add Workout</ModalHeader>
                 <ModalBody>
-                    <div className="flex flex-col gap-3">
-                        <Input
-                            register={register}
-                            name="email"
-                            placeholder="Email"
-                            error={errors.email?.message?.toString()}
-                            options={{
-                                required: {
-                                    value: true,
-                                    message: "Email is required",
-                                },
-                            }}
-                            fullWidth
-                        />
-
-                        <Input
-                            register={register}
-                            name="password"
-                            placeholder="Password"
-                            error={errors.password?.message?.toString()}
-                            options={{
-                                required: {
-                                    value: true,
-                                    message: "Password is required",
-                                },
-                            }}
-                            fullWidth
-                        />
-                    </div>
+                    <Input
+                        register={register}
+                        name="name"
+                        placeholder="Workout Name"
+                        error={errors.name?.message?.toString()}
+                        options={{
+                            required: {
+                                value: true,
+                                message: "Name is required",
+                            },
+                        }}
+                        fullWidth
+                    />
                 </ModalBody>
+                <ModalFooter>
+                    <Button
+                        type="button"
+                        color="secondary"
+                        onClick={() => setisOpen(false)}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        type="submit"
+                        color="primary"
+                        padding="normal"
+                        onClick={handleSubmit(onSubmit)}
+                    >
+                        Add
+                    </Button>
+                </ModalFooter>
             </form>
         </Modal>
-    );
-}
-
-function WorkoutCard({ children }: { children: React.ReactNode }) {
-    return (
-        <Card className="w-full max-w-lg">
-            <Box className="flex justify-between w-full gap-4">
-                <h2 className="text-lg font-medium ">{children}</h2>
-                <ArrowForwardIosOutlinedIcon />
-            </Box>
-        </Card>
     );
 }
 

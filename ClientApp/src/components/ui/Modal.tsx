@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { Card } from "./Card";
 import Box from "./Box";
@@ -35,9 +35,13 @@ export function Modal({ isOpen, setIsOpen, children }: ModalProps) {
                     leaveFrom="transform scale-100 opacity-100"
                     leaveTo="transform scale-95 opacity-0"
                 >
-                    <div className="fixed inset-0 flex items-center justify-center p-4">
-                        <Dialog.Panel>
-                            <Card rounded="roundedLg" shadow="none">
+                    <div className="fixed inset-0 flex items-center justify-center w-screen p-4">
+                        <Dialog.Panel className="flex justify-center w-screen">
+                            <Card
+                                rounded="roundedLg"
+                                shadow="none"
+                                className="w-full max-w-md "
+                            >
                                 {children}
                             </Card>
                         </Dialog.Panel>
@@ -52,7 +56,7 @@ export function ModalHeader({ children }: { children: React.ReactNode }) {
     return (
         <>
             <Box>
-                <h3 className="text-lg font-medium text-gray-900">{children}</h3>
+                <h3 className="text-lg font-medium text-white">{children}</h3>
             </Box>
             <Divider />
         </>
@@ -65,7 +69,8 @@ export function ModalBody({ children }: { children: React.ReactNode }) {
 
 export function ModalFooter({ children }: { children: React.ReactNode }) {
     return (
-        <div className="  bg-slate-100">
+        <div className="">
+            <Divider />
             <Box className="flex justify-end gap-2 ">{children}</Box>
         </div>
     );
