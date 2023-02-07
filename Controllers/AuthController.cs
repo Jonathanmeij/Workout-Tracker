@@ -38,7 +38,7 @@ public class AuthController : ControllerBase
 
 
     [HttpPost]
-    [Route("registreer")]
+    [Route("register")]
     public async Task<ActionResult<Gebruiker>> Registreer([FromBody] GebruikerRegistreer gebruikerRegistreer)
     {
         //check if email domain is in Services/emailDenyList.txt
