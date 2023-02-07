@@ -9,5 +9,9 @@ html {
 }
 
 a:hover {
-    color: #6b7280;
+    color: #bfc7d5;
+}
+html,
+body {
+    overscroll-behavior-y: none;
 }
