@@ -2,10 +2,15 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import AppRoutes from "./AppRoutes";
 import { AuthProvider } from "react-auth-kit";
+import MobileNavbar from "./components/mobileNavbar/MobileNavbar";
 
 export default function App() {
+    document.ontouchmove = function (e) {
+        e.preventDefault();
+    };
+
     return (
-        <div className="min-h-screen text-white bg-gray-900 font-inter">
+        <div className="min-h-screen text-white bg-gray-900 font-inter overscroll-none">
             <AuthProvider
                 authType="cookie"
                 authName="_auth"
@@ -18,6 +23,7 @@ export default function App() {
                         return <Route key={index} {...rest} element={element} />;
                     })}
                 </Routes>
+                <MobileNavbar />
             </AuthProvider>
         </div>
     );
