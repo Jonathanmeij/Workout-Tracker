@@ -9,13 +9,13 @@ import {
     Input,
     ModalFooter,
 } from "../../components/ui";
-import ArrowForwardIosOutlinedIcon from "@mui/icons-material/ArrowForwardIosOutlined";
 import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import Divider from "../../components/ui/Divider";
 import TextCard from "../../components/TextCard";
+import TitledList from "../../components/TitledList";
 
 export default function Home() {
     const ingelogd = true;
@@ -86,21 +86,14 @@ function WorkoutCardContainer() {
 
     return (
         <>
-            <div className="flex items-center justify-between w-full py-1">
-                <h2 className="text-xl font-semibold ">Workouts</h2>
-                <Button padding="none" onClick={() => setisOpen(true)}>
-                    <AddOutlinedIcon htmlColor="#2563eb" fontSize="large" />
-                </Button>
-            </div>
-            <div className="flex flex-col gap-3">
+            <AddWorkoutModal isOpen={isOpen} setisOpen={setisOpen} />
+            <TitledList title="Workouts" setisOpen={setisOpen}>
                 {workouts.map((workout) => (
                     <Link key={workout.id} to={`/workout/${workout.id}`}>
                         <TextCard>{workout.name}</TextCard>
                     </Link>
                 ))}
-            </div>
-
-            <AddWorkoutModal isOpen={isOpen} setisOpen={setisOpen} />
+            </TitledList>
         </>
     );
 }
