@@ -14,6 +14,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useParams } from "react-router-dom";
 import TextCard from "../../components/TextCard";
+import TitledList from "../../components/TitledList";
 
 export default function WorkoutPage() {
     const [isOpen, setisOpen] = useState(false);
@@ -28,19 +29,13 @@ export default function WorkoutPage() {
                             <EditOutlinedIcon />
                         </Button>
                     </TopBar>
-                    <div className="flex items-center justify-between w-full py-1">
-                        <h2 className="text-xl font-semibold ">Workouts</h2>
-                        <Button padding="none" onClick={() => setisOpen(true)}>
-                            <AddOutlinedIcon htmlColor="#2563eb" fontSize="large" />
-                        </Button>
-                    </div>
-                    <div className="flex flex-col gap-3">
+                    <TitledList title="Exercises" setisOpen={setisOpen}>
                         {exercises.map((exercise) => (
                             <Link key={exercise.id} to={`/workout/${id}/${exercise.id}`}>
                                 <TextCard>{exercise.name}</TextCard>
                             </Link>
                         ))}
-                    </div>
+                    </TitledList>
                 </div>
             </Container>
             <AddExerciseButton isOpen={isOpen} setisOpen={setisOpen} />
