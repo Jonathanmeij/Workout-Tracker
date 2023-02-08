@@ -1,5 +1,5 @@
 import TopBar from "../../components/TopBar";
-import { Button, Container } from "../../components/ui";
+import { Box, Button, Card, Container } from "../../components/ui";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { useParams } from "react-router-dom";
 import TitledList from "../../components/TitledList";
@@ -18,14 +18,42 @@ export default function ExercisePage() {
                             <EditOutlinedIcon />
                         </Button>
                     </TopBar>
-                    <TitledList title="Sets" hasAddButton={false}>
+                    <Card className="w-full max-w-lg">
+                        <Box className="flex flex-col justify-center w-full gap-4">
+                            <h2 className="text-xl font-semibold ">Exercise name</h2>
+                            <p className="text-sm">Graph here</p>
+                        </Box>
+                    </Card>
+                    <TitledList title="Sessions" hasAddButton={false}>
                         {sessions.map((session) => (
-                            <TextCard key={session.id}>{session.name}</TextCard>
+                            <SessionTextCard key={session.id} session={session} />
                         ))}
                     </TitledList>
                 </div>
             </Container>
         </div>
+    );
+}
+
+interface Session {
+    id: number;
+    name: string;
+}
+
+function SessionTextCard({ session }: { session: Session }) {
+    return (
+        <Card className="w-full max-w-lg">
+            <Box className="flex items-center justify-between w-full gap-4">
+                <div className="flex flex-col gap-1">
+                    <p className="text-sm text-gray-400">Weight</p>
+                    <h3>
+                        <span className="text-lg ">5 kg</span> x{" "}
+                        <span className="text-lg ">10 kg</span>
+                    </h3>
+                </div>
+                <h2 className="font-medium text-blue-400 text-md">{session.name}</h2>
+            </Box>
+        </Card>
     );
 }
 
