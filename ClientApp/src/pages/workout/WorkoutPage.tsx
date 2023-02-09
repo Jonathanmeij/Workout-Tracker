@@ -9,12 +9,12 @@ import {
     Input,
 } from "../../components/ui";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useParams } from "react-router-dom";
 import TextCard from "../../components/TextCard";
 import TitledList from "../../components/TitledList";
+import EmptyList from "../../components/EmptyList";
 
 export default function WorkoutPage() {
     const [isOpen, setisOpen] = useState(false);
@@ -30,11 +30,18 @@ export default function WorkoutPage() {
                         </Button>
                     </TopBar>
                     <TitledList title="Exercises" setisOpen={setisOpen}>
-                        {exercises.map((exercise) => (
-                            <Link key={exercise.id} to={`/workout/${id}/${exercise.id}`}>
-                                <TextCard>{exercise.name}</TextCard>
-                            </Link>
-                        ))}
+                        {exercises.length === 0 ? (
+                            <EmptyList item="exercise" setIsOpen={setisOpen} />
+                        ) : (
+                            exercises.map((exercise) => (
+                                <Link
+                                    key={exercise.id}
+                                    to={`/workout/${id}/${exercise.id}`}
+                                >
+                                    <TextCard>{exercise.name}</TextCard>
+                                </Link>
+                            ))
+                        )}
                     </TitledList>
                 </div>
             </Container>
@@ -98,7 +105,7 @@ function AddExerciseButton({
     );
 }
 
-const exercises = [
+const exercises: Exercise[] = [
     {
         id: 1,
         name: "Bench Press",
@@ -112,3 +119,8 @@ const exercises = [
         name: "Tricep Pushdown",
     },
 ];
+
+type Exercise = {
+    id: number;
+    name: string;
+};

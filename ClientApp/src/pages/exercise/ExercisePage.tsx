@@ -3,7 +3,6 @@ import { Box, Button, Card, Container } from "../../components/ui";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { useParams } from "react-router-dom";
 import TitledList from "../../components/TitledList";
-import TextCard from "../../components/TextCard";
 
 export default function ExercisePage() {
     const { exerciseId } = useParams<{ exerciseId: string }>();

@@ -9,13 +9,13 @@ import {
     Input,
     ModalFooter,
 } from "../../components/ui";
-import AddOutlinedIcon from "@mui/icons-material/AddOutlined";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import Divider from "../../components/ui/Divider";
 import TextCard from "../../components/TextCard";
 import TitledList from "../../components/TitledList";
+import EmptyList from "../../components/EmptyList";
 
 export default function Home() {
     const ingelogd = true;
@@ -82,17 +82,21 @@ function HomeIngelogd() {
 }
 
 function WorkoutCardContainer() {
-    const [isOpen, setisOpen] = useState(false);
+    const [isOpen, setIsOpen] = useState(false);
 
     return (
         <>
-            <AddWorkoutModal isOpen={isOpen} setisOpen={setisOpen} />
-            <TitledList title="Workouts" setisOpen={setisOpen}>
-                {workouts.map((workout) => (
-                    <Link key={workout.id} to={`/workout/${workout.id}`}>
-                        <TextCard>{workout.name}</TextCard>
-                    </Link>
-                ))}
+            <AddWorkoutModal isOpen={isOpen} setisOpen={setIsOpen} />
+            <TitledList hasAddButton title="Workouts" setisOpen={setIsOpen}>
+                {workouts.length === 0 ? (
+                    <EmptyList item="workout" setIsOpen={setIsOpen} />
+                ) : (
+                    workouts.map((workout) => (
+                        <Link key={workout.id} to={`/workout/${workout.id}`}>
+                            <TextCard>{workout.name}</TextCard>
+                        </Link>
+                    ))
+                )}
             </TitledList>
         </>
     );
@@ -153,7 +157,7 @@ function AddWorkoutModal({
     );
 }
 
-const workouts = [
+const workouts: Workout[] = [
     {
         name: "push 1",
         id: 1,
@@ -167,3 +171,8 @@ const workouts = [
         id: 3,
     },
 ];
+
+type Workout = {
+    name: string;
+    id: number;
+};
