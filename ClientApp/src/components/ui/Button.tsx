@@ -45,6 +45,7 @@ function Button({
     padding,
     fullWidth,
     onMouseOver,
+    className,
 }: ButtonProps) {
     return to ? (
         <Link to={to} className={buttonStyles({ color, padding, fullWidth })}>
@@ -54,7 +55,7 @@ function Button({
         </Link>
     ) : (
         <button
-            className={buttonStyles({ color, padding, fullWidth })}
+            className={`${buttonStyles({ color, padding, fullWidth })} ${className}`}
             onClick={onClick}
             type={type}
             onMouseOver={onMouseOver}
