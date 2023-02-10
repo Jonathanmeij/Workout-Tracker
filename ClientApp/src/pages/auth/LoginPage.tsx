@@ -64,6 +64,7 @@ export default function LoginPage() {
                                     message: "Password is required",
                                 },
                             }}
+                            type="password"
                             fullWidth
                         />
 

@@ -17,6 +17,7 @@ import TextCard from "../../components/TextCard";
 import TitledList from "../../components/TitledList";
 import EmptyList from "../../components/EmptyList";
 import { useIsAuthenticated } from "react-auth-kit";
+import { useAuthUser } from "react-auth-kit";
 
 export default function Home() {
     const ingelogd = useIsAuthenticated();
@@ -49,6 +50,9 @@ function HomeNietIngelogd() {
 }
 
 function HomeIngelogd() {
+    const auth = useAuthUser();
+    const Username = auth()!.email.split("@")[0];
+
     return (
         <div>
             <Container className="">
@@ -56,7 +60,7 @@ function HomeIngelogd() {
                     <h1 className="text-md">
                         welcome back, <br />
                         <span className="text-2xl font-semibold text-blue-600">
-                            Username
+                            {Username}
                         </span>
                     </h1>
                     <Divider />
