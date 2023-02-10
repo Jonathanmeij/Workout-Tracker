@@ -9,11 +9,11 @@ public class DatabaseContext : IdentityDbContext<Gebruiker> {
     public DbSet<Workout> Workouts { get; set; }
     public DbSet<Exercise> Exercises { get; set; }
     public DbSet<Session> Sessions { get; set; }
-    // protected override void OnModelCreating(ModelBuilder modelBuilder) {
-    //     base.OnModelCreating(modelBuilder);
-    //     modelBuilder.Entity<Workout>().ToTable("Workout");
-    //     modelBuilder.Entity<Exercise>().ToTable("Exercise");
-    //     modelBuilder.Entity<Session>().ToTable("Session");
-    // }
-    
+    public DbSet<Gebruiker> Gebruikers { get; set; }
+    protected override void OnModelCreating(ModelBuilder modelBuilder) {
+        modelBuilder.Entity<Workout>().HasMany(w => w.Exercises).WithOne(e => e.Workout);
+        modelBuilder.Entity<Workout>().HasOne(w => w.Gebruiker).WithMany(g => g.Workouts);
+        modelBuilder.Entity<Exercise>().HasMany(e => e.Sessions).WithOne(s => s.Exercise);
+        base.OnModelCreating(modelBuilder);
+    }
 }
