@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import AppRoutes from "./AppRoutes";
-import { AuthProvider } from "react-auth-kit";
 import MobileNavbar from "./components/mobileNavbar/MobileNavbar";
 import { useIsAuthenticated } from "react-auth-kit";
 
