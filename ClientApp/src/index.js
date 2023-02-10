@@ -6,15 +6,23 @@ import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import reportWebVitals from "./reportWebVitals";
 import "./index.css";
 import App from "./App.tsx";
+import { AuthProvider } from "react-auth-kit";
 
 const baseUrl = document.getElementsByTagName("base")[0].getAttribute("href");
 const rootElement = document.getElementById("root");
 const root = createRoot(rootElement);
 
 root.render(
-    <BrowserRouter basename={baseUrl}>
-        <App />
-    </BrowserRouter>
+    <AuthProvider
+        authType="cookie"
+        cookieName="auth_cookie"
+        cookieDomain={window.location.hostname}
+        cookieSecure={window.location.protocol === "https:"}
+    >
+        <BrowserRouter basename={baseUrl}>
+            <App />
+        </BrowserRouter>
+    </AuthProvider>
 );
 
 // If you want your app to work offline and load faster, you can change

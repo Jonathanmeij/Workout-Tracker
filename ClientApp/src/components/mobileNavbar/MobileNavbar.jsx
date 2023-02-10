@@ -13,7 +13,7 @@ export default function MobileNavbar() {
                     <Button to="/" color="none" className="text-white">
                         <HomeOutlinedIcon fontSize="large" />
                     </Button>
-                    <Button to="/profile" color="none" className="text-white ">
+                    <Button to="/account" color="none" className="text-white ">
                         <AccountCircleOutlinedIcon fontSize="large" />
                     </Button>
                 </div>

@@ -7,7 +7,7 @@ const buttonStyles = cva("rounded text-center border-1", {
             primary: " bg-blue-600 text-white border-0  hover:bg-blue-700",
             secondary: " bg-gray-700 text-white border-gray-600 hover:bg-gray-600 ",
             none: "bg-transparent hover:bg-gray-900 border-0",
-            danger: " bg-red-600 text-white hover:bg-red-700",
+            danger: " bg-red-600 text-white hover:bg-red-700 border-red-500",
         },
         padding: {
             none: "p-0",

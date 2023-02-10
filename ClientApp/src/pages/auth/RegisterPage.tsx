@@ -1,7 +1,11 @@
 import CenterCardPage from "../CenterCardPage";
 import { useForm } from "react-hook-form";
 import { Input, Button } from "../../components/ui";
-import { useRef } from "react";
+import { useRef, useState } from "react";
+import axios from "axios";
+import { login } from "./Login";
+import { useSignIn } from "react-auth-kit";
+import { useNavigate } from "react-router-dom";
 
 export default function RegisterPage() {
     const {
@@ -10,9 +14,29 @@ export default function RegisterPage() {
         formState: { errors },
         watch,
     } = useForm();
-    const onSubmit = (data) => console.log(data);
+    const onSubmit = (data) => handleRegister(data);
     const password = useRef({});
     password.current = watch("password", "");
+    const [error, setError] = useState("");
+    const signIn = useSignIn();
+    const navigate = useNavigate();
+
+    const handleRegister = async (data) => {
+        try {
+            const response = await axios.post("/api/auth/register", data);
+            console.log(response);
+
+            if (response.status === 201) {
+                if (await login(setError, data.email, data.password, signIn)) {
+                    navigate("/");
+                }
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                setError(error.response?.data.errors[0].description);
+            }
+        }
+    };
 
     return (
         <CenterCardPage>
@@ -20,6 +44,7 @@ export default function RegisterPage() {
             <div className="w-full max-w-sm">
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex flex-col gap-3">
+                        {error !== "" && <p className="text-red-500">{error}</p>}
                         <Input
                             register={register}
                             name="email"

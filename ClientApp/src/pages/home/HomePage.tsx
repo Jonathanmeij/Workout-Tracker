@@ -11,18 +11,19 @@ import {
 } from "../../components/ui";
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import Divider from "../../components/ui/Divider";
 import TextCard from "../../components/TextCard";
 import TitledList from "../../components/TitledList";
 import EmptyList from "../../components/EmptyList";
+import { useIsAuthenticated } from "react-auth-kit";
 
 export default function Home() {
-    const ingelogd = true;
+    const ingelogd = useIsAuthenticated();
 
     return (
         <div className="max-w-lg mx-auto">
-            {ingelogd ? <HomeIngelogd /> : <HomeNietIngelogd />}
+            {ingelogd() ? <HomeIngelogd /> : <HomeNietIngelogd />}
         </div>
     );
 }

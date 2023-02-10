@@ -1,7 +1,11 @@
 import CenterCardPage from "../CenterCardPage";
 import { useForm } from "react-hook-form";
 import { Input, Button } from "../../components/ui";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useState } from "react";
+import { login } from "./Login";
+import { useSignIn } from "react-auth-kit";
 
 export default function LoginPage() {
     const {
@@ -9,7 +13,24 @@ export default function LoginPage() {
         handleSubmit,
         formState: { errors },
     } = useForm();
-    const onSubmit = (data) => console.log(data);
+    const onSubmit = (data) => handleLogin(data);
+    const [error, setError] = useState("");
+    const navigate = useNavigate();
+    const signIn = useSignIn();
+
+    const handleLogin = async (data) => {
+        try {
+            if (await login(setError, data.email, data.password, signIn)) {
+                navigate("/");
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                if (error.response?.data.title === "Unauthorized") {
+                    setError("Invalid email or password");
+                }
+            }
+        }
+    };
 
     return (
         <CenterCardPage>
@@ -17,6 +38,7 @@ export default function LoginPage() {
             <div className="w-full max-w-sm">
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex flex-col gap-3">
+                        {error !== "" && <p className="text-red-500">{error}</p>}
                         <Input
                             register={register}
                             name="email"
