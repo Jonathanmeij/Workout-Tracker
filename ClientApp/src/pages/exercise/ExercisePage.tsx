@@ -8,15 +8,19 @@ export default function ExercisePage() {
     const { exerciseId } = useParams<{ exerciseId: string }>();
     const { id } = useParams<{ id: string }>();
 
+    const editFunction = () => {
+        console.log("Edit");
+    };
+
     return (
         <div className="max-w-lg mx-auto">
             <Container>
                 <div className="flex flex-col gap-3 my-4">
-                    <TopBar to={"/workout/" + id} title={"Exercise " + exerciseId}>
-                        <Button>
-                            <EditOutlinedIcon />
-                        </Button>
-                    </TopBar>
+                    <TopBar
+                        to={"/workout/" + id}
+                        title={"Exercise " + exerciseId}
+                        editFunction={editFunction}
+                    />
                     <Card className="w-full max-w-lg">
                         <Box className="flex flex-col justify-center w-full gap-4">
                             <h2 className="text-xl font-semibold ">Exercise name</h2>

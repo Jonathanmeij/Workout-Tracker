@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Workout_Track_app;
 
@@ -21,7 +22,7 @@ public class WorkoutController : ControllerBase {
             return Unauthorized();
         }
 
-        var workouts = _context.Workouts.Where(w => w.Gebruiker.UserName == username).ToList();
+        var workouts = _context.Workouts.Where(w => w.Gebruiker.UserName == username).Include(w => w.Exercises).ToList();
         return Ok(workouts);
     }
 

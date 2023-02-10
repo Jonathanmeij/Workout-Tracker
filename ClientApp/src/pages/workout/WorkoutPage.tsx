@@ -20,17 +20,17 @@ export default function WorkoutPage() {
     const [isOpen, setisOpen] = useState(false);
     const { id } = useParams<{ id: string }>();
 
+    const editFunction = () => {
+        console.log("Edit");
+    };
+
     return (
         <div className="max-w-lg mx-auto">
             <Container>
                 <div className="flex flex-col gap-3 my-4">
-                    <TopBar to="/" title="Workout name">
-                        <Button>
-                            <EditOutlinedIcon />
-                        </Button>
-                    </TopBar>
-                    <TitledList title="Exercises" setisOpen={setisOpen}>
-                        {exercises.length === 0 ? (
+                    <TopBar to="/" title="Workout name" editFunction={editFunction} />
+                    <TitledList hasAddButton title="Exercises" setisOpen={setisOpen}>
+                        {/* {exercises.length === 0 ? (
                             <EmptyList item="exercise" setIsOpen={setisOpen} />
                         ) : (
                             exercises.map((exercise) => (
@@ -41,7 +41,7 @@ export default function WorkoutPage() {
                                     <TextCard>{exercise.name}</TextCard>
                                 </Link>
                             ))
-                        )}
+                        )} */}
                     </TitledList>
                 </div>
             </Container>
@@ -104,21 +104,6 @@ function AddExerciseButton({
         </Modal>
     );
 }
-
-const exercises: Exercise[] = [
-    {
-        id: 1,
-        name: "Bench Press",
-    },
-    {
-        id: 2,
-        name: "Incline Bench Press",
-    },
-    {
-        id: 3,
-        name: "Tricep Pushdown",
-    },
-];
 
 type Exercise = {
     id: number;
