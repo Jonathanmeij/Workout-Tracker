@@ -1,4 +1,4 @@
-# Workout-Track-app
+# Workout Tracker
 ## Live website
 https://workouttrack.azurewebsites.net
 
