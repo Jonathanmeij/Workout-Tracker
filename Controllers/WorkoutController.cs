@@ -22,7 +22,12 @@ public class WorkoutController : ControllerBase {
             return Unauthorized();
         }
 
-        var workouts = _context.Workouts.Where(w => w.Gebruiker.UserName == username).Include(w => w.Exercises).ToList();
+        // fetch workouts with exercises and sessions
+        var workouts = _context.Workouts
+            .Where(w => w.Gebruiker.UserName == username)
+            .Include(w => w.Exercises)
+                .ThenInclude(e => e.Sessions)
+            .ToList();
         return Ok(workouts);
     }
 
@@ -39,6 +44,10 @@ public class WorkoutController : ControllerBase {
 
         if (gebruiker == null) {
             return Unauthorized();
+        }
+
+        if (workoutDto.Name.Length > 50) {
+            return BadRequest("Name is too long");
         }
 
         Workout workout = new Workout {
