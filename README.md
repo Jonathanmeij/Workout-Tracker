@@ -7,5 +7,6 @@ https://workouttrack.azurewebsites.net
 ## Goals
 * Learning React-query
 * Practising backend authentication and security
+  * Refresh tokens
 * Practising frontend reusability
 * Practising tailwind and design
