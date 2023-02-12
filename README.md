@@ -1,6 +1,6 @@
 # Workout-Track-app
 ## Live website
-https://workouttrack.azurewebsites.net/login
+https://workouttrack.azurewebsites.net
 
 ## Goals
 * Learning React-query
