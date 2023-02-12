@@ -5,5 +5,6 @@ public class Session {
     public DateTime Date { get; set; }
     public int Weight { get; set; }
     public int Reps { get; set; }
-    public Exercise Exercise { get; set; }
+    public int Sets { get; set; }
+    public virtual Exercise Exercise { get; set; } = null!;
 }

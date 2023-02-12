@@ -96,6 +96,7 @@ public class AuthController : ControllerBase
 
         return Unauthorized();
     }
+   
 }
 
 public class GebruikerLogin
