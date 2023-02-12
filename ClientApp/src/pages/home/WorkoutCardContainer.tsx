@@ -1,8 +1,6 @@
 import { useState } from "react";
+import { useAuthHeader } from "react-auth-kit";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
-import EmptyList from "../../components/EmptyList";
-import TextCard from "../../components/TextCard";
 import TitledList from "../../components/TitledList";
 import {
     Button,
@@ -12,15 +10,43 @@ import {
     ModalFooter,
     ModalHeader,
 } from "../../components/ui";
+import { useQuery, useMutation } from "react-query";
+import EmptyList from "../../components/EmptyList";
+import { Link } from "react-router-dom";
+import TextCard from "../../components/TextCard";
+import { getWorkouts, postWorkout } from "../../services/workoutsFetch";
 
 export default function WorkoutCardContainer() {
     const [isOpen, setIsOpen] = useState(false);
+    const authHeader = useAuthHeader();
+
+    const query = useQuery("workouts", () => getWorkouts(authHeader()));
+
+    const mutations = useMutation((data: any) => postWorkout(data, authHeader()), {
+        onSuccess: () => {
+            query.refetch();
+        },
+    });
+
+    const workouts = query.data?.data;
+
+    if (query.isLoading) {
+        return <div>Loading...</div>;
+    }
+
+    if (query.isError) {
+        return <div>Error</div>;
+    }
 
     return (
         <>
-            <AddWorkoutModal isOpen={isOpen} setisOpen={setIsOpen} />
+            <AddWorkoutModal
+                mutations={mutations}
+                isOpen={isOpen}
+                setisOpen={setIsOpen}
+            />
             <TitledList hasAddButton title="Workouts" setisOpen={setIsOpen}>
-                {/* {workouts.length === 0 ? (
+                {workouts.length === 0 ? (
                     <EmptyList item="workout" setIsOpen={setIsOpen} />
                 ) : (
                     workouts.map((workout) => (
@@ -28,7 +54,7 @@ export default function WorkoutCardContainer() {
                             <TextCard>{workout.name}</TextCard>
                         </Link>
                     ))
-                )} */}
+                )}
             </TitledList>
         </>
     );
@@ -37,16 +63,22 @@ export default function WorkoutCardContainer() {
 function AddWorkoutModal({
     isOpen,
     setisOpen,
+    mutations,
 }: {
     isOpen: boolean;
     setisOpen: (value: boolean) => void;
+    mutations: any;
 }) {
     const {
         register,
         handleSubmit,
         formState: { errors },
     } = useForm();
-    const onSubmit = (data) => console.log(data);
+
+    const onSubmit = (data) => {
+        mutations.mutate(data);
+        setisOpen(false);
+    };
 
     return (
         <Modal isOpen={isOpen} setIsOpen={setisOpen}>

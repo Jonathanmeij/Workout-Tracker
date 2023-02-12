@@ -4,6 +4,7 @@ import RegisterPage from "./pages/auth/RegisterPage";
 import WorkoutPage from "./pages/workout/WorkoutPage";
 import ExercisePage from "./pages/exercise/ExercisePage";
 import AccountPage from "./pages/account/AccountPage";
+import { RequireAuth } from "react-auth-kit";
 
 const AppRoutes = [
     {
@@ -20,15 +21,27 @@ const AppRoutes = [
     },
     {
         path: "/workout/:id",
-        element: <WorkoutPage />,
+        element: (
+            <RequireAuth loginPath="/login">
+                <WorkoutPage />
+            </RequireAuth>
+        ),
     },
     {
         path: "/workout/:id/:exerciseId",
-        element: <ExercisePage />,
+        element: (
+            <RequireAuth loginPath="/login">
+                <ExercisePage />
+            </RequireAuth>
+        ),
     },
     {
         path: "/account",
-        element: <AccountPage />,
+        element: (
+            <RequireAuth loginPath="/login">
+                <AccountPage />
+            </RequireAuth>
+        ),
     },
 ];
 

@@ -8,29 +8,53 @@ import {
     ModalHeader,
     Input,
 } from "../../components/ui";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useParams } from "react-router-dom";
-import TextCard from "../../components/TextCard";
 import TitledList from "../../components/TitledList";
+import { useMutation, useQuery } from "react-query";
+import { getWorkouts } from "../home/getWorkouts";
+import { useAuthHeader } from "react-auth-kit";
 import EmptyList from "../../components/EmptyList";
+import TextCard from "../../components/TextCard";
+import { postExercise } from "../../services/workoutsFetch";
 
 export default function WorkoutPage() {
     const [isOpen, setisOpen] = useState(false);
     const { id } = useParams<{ id: string }>();
+    const idInt = id ? parseInt(id) : 0;
+    const authHeader = useAuthHeader();
 
     const editFunction = () => {
         console.log("Edit");
     };
 
+    const query = useQuery("workouts", () => getWorkouts(authHeader()));
+
+    const mutations = useMutation((data: any) => postExercise(data, authHeader()), {
+        onSuccess: () => {
+            query.refetch();
+        },
+    });
+
+    const workout = query.data?.data.find((workout) => workout.id === idInt);
+    const exercises = workout?.exercises;
+
+    if (query.isLoading) {
+        return <div>Loading...</div>;
+    }
+
+    if (query.isError) {
+        return <div>Error</div>;
+    }
+
     return (
         <div className="max-w-lg mx-auto">
             <Container>
                 <div className="flex flex-col gap-3 my-4">
-                    <TopBar to="/" title="Workout name" editFunction={editFunction} />
+                    <TopBar to="/" title={workout.name} editFunction={editFunction} />
                     <TitledList hasAddButton title="Exercises" setisOpen={setisOpen}>
-                        {/* {exercises.length === 0 ? (
+                        {exercises.length === 0 ? (
                             <EmptyList item="exercise" setIsOpen={setisOpen} />
                         ) : (
                             exercises.map((exercise) => (
@@ -41,11 +65,16 @@ export default function WorkoutPage() {
                                     <TextCard>{exercise.name}</TextCard>
                                 </Link>
                             ))
-                        )} */}
+                        )}
                     </TitledList>
                 </div>
             </Container>
-            <AddExerciseButton isOpen={isOpen} setisOpen={setisOpen} />
+            <AddExerciseButton
+                mutations={mutations}
+                isOpen={isOpen}
+                setisOpen={setisOpen}
+                id={idInt}
+            />
         </div>
     );
 }
@@ -53,16 +82,27 @@ export default function WorkoutPage() {
 function AddExerciseButton({
     isOpen,
     setisOpen,
+    mutations,
+    id,
 }: {
     isOpen: boolean;
     setisOpen: (value: boolean) => void;
+    mutations: any;
+    id: number;
 }) {
     const {
         register,
         handleSubmit,
         formState: { errors },
     } = useForm();
-    const onSubmit = (data) => console.log(data);
+    const onSubmit = (data) => {
+        const exercisedata = {
+            name: data.name,
+            workoutId: id,
+        };
+        mutations.mutate(exercisedata);
+        setisOpen(false);
+    };
 
     return (
         <Modal isOpen={isOpen} setIsOpen={setisOpen}>
@@ -105,7 +145,7 @@ function AddExerciseButton({
     );
 }
 
-type Exercise = {
-    id: number;
-    name: string;
-};
+// type Exercise = {
+//     id: number;
+//     name: string;
+// };

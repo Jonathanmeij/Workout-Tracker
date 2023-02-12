@@ -14,8 +14,8 @@ const root = createRoot(rootElement);
 
 root.render(
     <AuthProvider
-        authType="cookie"
-        cookieName="auth_cookie"
+        authType={"cookie"}
+        authName={"auth"}
         cookieDomain={window.location.hostname}
         cookieSecure={window.location.protocol === "https:"}
     >

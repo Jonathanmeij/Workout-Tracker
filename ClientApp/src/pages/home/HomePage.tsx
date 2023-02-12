@@ -1,21 +1,10 @@
-import {
-    Container,
-    Card,
-    Box,
-    Button,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    Input,
-    ModalFooter,
-} from "../../components/ui";
+import { Container, Card, Box, Button } from "../../components/ui";
 import Divider from "../../components/ui/Divider";
-import { useIsAuthenticated } from "react-auth-kit";
-import { useAuthUser } from "react-auth-kit";
 import WorkoutCardContainer from "./WorkoutCardContainer";
+import { useAuthUser } from "react-auth-kit";
 
 export default function Home() {
-    const ingelogd = useIsAuthenticated();
+    const ingelogd = useAuthUser();
 
     return (
         <div className="max-w-lg mx-auto">
@@ -81,7 +70,7 @@ function HomeIngelogd() {
     );
 }
 
-type Workout = {
-    name: string;
-    id: number;
-};
+// type Workout = {
+//     name: string;
+//     id: number;
+// };

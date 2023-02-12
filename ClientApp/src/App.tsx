@@ -4,6 +4,7 @@ import AppRoutes from "./AppRoutes";
 import MobileNavbar from "./components/mobileNavbar/MobileNavbar";
 import { useIsAuthenticated } from "react-auth-kit";
 import { QueryClient, QueryClientProvider } from "react-query";
+
 const queryClient = new QueryClient();
 
 export default function App() {
@@ -13,19 +14,21 @@ export default function App() {
     const ingelogd = useIsAuthenticated();
 
     return (
-        <QueryClientProvider client={queryClient}>
-            <div className="min-h-screen text-white bg-gray-900 font-inter overscroll-none">
-                <ScrollToTop />
+        <div className="">
+            <QueryClientProvider client={queryClient}>
+                <div className="pb-20 text-white bg-gray-900 dotnmin-h-screen font-inter overscroll-none">
+                    <ScrollToTop />
 
-                <Routes>
-                    {AppRoutes.map((route, index) => {
-                        const { element, ...rest } = route;
-                        return <Route key={index} {...rest} element={element} />;
-                    })}
-                </Routes>
-                {ingelogd() ? <MobileNavbar /> : null}
-            </div>
-        </QueryClientProvider>
+                    <Routes>
+                        {AppRoutes.map((route, index) => {
+                            const { element, ...rest } = route;
+                            return <Route key={index} {...rest} element={element} />;
+                        })}
+                    </Routes>
+                    {ingelogd() ? <MobileNavbar /> : null}
+                </div>
+            </QueryClientProvider>
+        </div>
     );
 }
 
