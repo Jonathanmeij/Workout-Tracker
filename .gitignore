@@ -230,3 +230,7 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
+appsettings.json
+database.db-wal
+database.db-shm
+database.db

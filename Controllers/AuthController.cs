@@ -1,7 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -26,14 +28,16 @@ public class AuthController : ControllerBase
     // private readonly IEmailSender _emailSender;
     private readonly ILogger _logger;
     private readonly DatabaseContext _context;
+    private readonly IConfiguration configuration;
 
-    public AuthController(UserManager<Gebruiker> userManager, SignInManager<Gebruiker> signInManager, ILogger<AuthController> logger, DatabaseContext context)
+    public AuthController(UserManager<Gebruiker> userManager, SignInManager<Gebruiker> signInManager, ILogger<AuthController> logger, DatabaseContext context, IConfiguration configuration)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         // _emailSender = emailSender;
         _logger = logger;
         _context = context;
+        this.configuration = configuration;
     }
 
 
@@ -76,7 +80,8 @@ public class AuthController : ControllerBase
         if (_user != null)
             if (await _userManager.CheckPasswordAsync(_user, gebruikerLogin.Password))
             {
-                var secret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("awef98awef978haweof8g7aw789efhh789awef8h9awh89efh89awe98f89uawef9j8aw89hefawef"));
+                string JWTsecret = configuration.GetValue<string>("JWTSecret");
+                var secret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JWTsecret));
 
                 var signingCredentials = new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
                 var claims = new List<Claim> { new Claim(ClaimTypes.Name, _user.UserName) };
@@ -103,12 +108,32 @@ public class AuthController : ControllerBase
                     Gebruiker = _user,
                     GebruikerId = _user.Id
                 };
+
+                // encrypt refresh token
+                var refreshTokenOptions = new JwtSecurityToken
+                (
+                    issuer: "https://localhost:7047",
+                    audience: "https://localhost:7047",
+                    claims: new List<Claim> { new Claim(ClaimTypes.Name, refreshTokenModel.Token) },
+                    expires: refreshTokenModel.ExpirationDate,
+                    signingCredentials: signingCredentials
+                );
+
+                // hash refresh token and save to db
+                var TokenUnHashed = new JwtSecurityTokenHandler().WriteToken(refreshTokenOptions);
+
+                var Salt = Hashing.GenerateSalt();
+                byte[] refreshTokenHash = Hashing.Hash(TokenUnHashed, Salt);
+                refreshTokenModel.Token = Convert.ToBase64String(refreshTokenHash);
+                refreshTokenModel.Salt = Salt;
+
+                _context.RefreshTokens.RemoveRange(_context.RefreshTokens.Where(x => x.GebruikerId == _user.Id));
                 _context.RefreshTokens.Add(refreshTokenModel);
                 _context.SaveChanges();
-
+                
                 return Ok(new {
                     Token = accesToken,
-                    RefreshToken = refreshToken,
+                    RefreshToken = TokenUnHashed,
                     refreshTokenExpiryTime = refreshTokenExpiryTime
                 });
             }
@@ -122,35 +147,55 @@ public class AuthController : ControllerBase
         var _user = await _userManager.FindByEmailAsync(refreshTokenRequest.Email);
         if (_user != null)
         {
-            var refreshToken = _context.RefreshTokens.FirstOrDefault(x => x.Token == refreshTokenRequest.RefreshToken);
-            if (refreshToken != null)
-            {
-                var secret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("awef98awef978haweof8g7aw789efhh789awef8h9awh89efh89awe98f89uawef9j8aw89hefawef"));
+            var refreshToken = _context.RefreshTokens.FirstOrDefault(x => x.GebruikerId == _user.Id);
 
-                var signingCredentials = new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
-                var claims = new List<Claim> { new Claim(ClaimTypes.Name, _user.UserName) };
-                var roles = await _userManager.GetRolesAsync(_user);
-                foreach (var role in roles)
-                    claims.Add(new Claim(ClaimTypes.Role, role));
-                var tokenOptions = new JwtSecurityToken
-                (
-                    issuer: "https://localhost:7047",
-                    audience: "https://localhost:7047",
-                    claims: claims,
-                    expires: DateTime.Now.AddMinutes(60),
-                    signingCredentials: signingCredentials
-                );
-                var accesToken = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
 
-                return Ok(new {
-                    Token = accesToken,
-                });
+            if (refreshToken == null) {
+                return Unauthorized();
             }
+            
+            var IsCorrectRefreshToken = Hashing.VerifyHash(refreshTokenRequest.RefreshToken,  refreshToken.Token, refreshToken.Salt, _logger);
+
+            if (!IsCorrectRefreshToken) {
+                return Unauthorized();
+            }
+        
+            var JWTSecret = configuration.GetValue<string>("JWTSecret");
+            var secret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JWTSecret));
+
+            var signingCredentials = new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
+            var claims = new List<Claim> { new Claim(ClaimTypes.Name, _user.UserName) };
+            var roles = await _userManager.GetRolesAsync(_user);
+            foreach (var role in roles)
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            var tokenOptions = new JwtSecurityToken
+            (
+                issuer: "https://localhost:7047",
+                audience: "https://localhost:7047",
+                claims: claims,
+                expires: DateTime.Now.AddMinutes(60),
+                signingCredentials: signingCredentials
+            );
+            var accesToken = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+
+            return Ok(new {
+                Token = accesToken,
+            });
+            
         }
 
         return Unauthorized();
     }
-   
+
+    [HttpPost("RemoveAllRefreshTokens")]
+    [Authorize(Roles = "Admin")]
+    public IActionResult RemoveAllRefreshTokens()
+    {
+        _context.RefreshTokens.RemoveRange(_context.RefreshTokens);
+        _context.SaveChanges();
+
+        return Ok();
+    }
 }
 
 public class GebruikerLogin
@@ -165,9 +210,9 @@ public class GebruikerLogin
 public class RefreshTokenRequest
 {
     [Required(ErrorMessage = "Email is required")]
-    public string? Email { get; init; }
+    public string Email { get; init; } = null!; 
 
     [Required(ErrorMessage = "RefreshToken is required")]
-    public string? RefreshToken { get; init; }
+    public string RefreshToken { get; init; } = null!;
 }
 
