@@ -7,6 +7,7 @@ import reportWebVitals from "./reportWebVitals";
 import "./index.css";
 import App from "./App.tsx";
 import { AuthProvider } from "react-auth-kit";
+import refreshApi from "./services/refreshToken";
 
 const baseUrl = document.getElementsByTagName("base")[0].getAttribute("href");
 const rootElement = document.getElementById("root");
@@ -18,6 +19,7 @@ root.render(
         authName={"auth"}
         cookieDomain={window.location.hostname}
         cookieSecure={window.location.protocol === "https:"}
+        refresh={refreshApi}
     >
         <BrowserRouter basename={baseUrl}>
             <App />

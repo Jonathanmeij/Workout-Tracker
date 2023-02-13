@@ -93,6 +93,6 @@ public class RollenController : ControllerBase
 
 public class GebruikerMetRol
 {
-    public string userName { get; init; }
-    public string roleName { get; init; }
+    public string userName { get; init; } = null!;
+    public string roleName { get; init; } = null!;
 }

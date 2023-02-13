@@ -16,12 +16,16 @@ export const login = async (setError, email, wachtwoord, signIn) => {
             });
 
         if (response) {
+            console.log(response);
+
             if (
                 await signIn({
                     token: response.data.token,
                     expiresIn: 60,
                     tokenType: "Bearer",
                     authState: { email: email },
+                    refreshToken: response.data.refreshToken,
+                    refreshTokenExpireIn: response.data.refreshTokenExpiryIn,
                 })
             ) {
                 return true;
