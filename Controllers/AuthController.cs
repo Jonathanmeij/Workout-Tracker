@@ -130,11 +130,17 @@ public class AuthController : ControllerBase
                 _context.RefreshTokens.RemoveRange(_context.RefreshTokens.Where(x => x.GebruikerId == _user.Id));
                 _context.RefreshTokens.Add(refreshTokenModel);
                 _context.SaveChanges();
+
+                var refreshTokenMinutes = Convert.ToInt32(refreshTokenExpiryTime.Subtract(DateTime.Now).TotalMinutes);
+                var accesTokenMinutes = 60;
+
+                _logger.LogInformation("refresh token: " + TokenUnHashed);
                 
                 return Ok(new {
                     Token = accesToken,
+                    tokenExpiryIn = accesTokenMinutes,
                     RefreshToken = TokenUnHashed,
-                    refreshTokenExpiryTime = refreshTokenExpiryTime
+                    refreshTokenExpiryIn = refreshTokenMinutes
                 });
             }
 
@@ -142,22 +148,24 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("refresh")]
+    [Authorize]
     public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequest refreshTokenRequest)
     {
-        var _user = await _userManager.FindByEmailAsync(refreshTokenRequest.Email);
+        var _user = await _userManager.FindByNameAsync(User!.Identity!.Name);
+        
         if (_user != null)
         {
             var refreshToken = _context.RefreshTokens.FirstOrDefault(x => x.GebruikerId == _user.Id);
 
 
             if (refreshToken == null) {
-                return Unauthorized();
+                return Unauthorized("Refresh token not found");
             }
             
             var IsCorrectRefreshToken = Hashing.VerifyHash(refreshTokenRequest.RefreshToken,  refreshToken.Token, refreshToken.Salt, _logger);
 
             if (!IsCorrectRefreshToken) {
-                return Unauthorized();
+                return Unauthorized("Refresh token not correct");
             }
         
             var JWTSecret = configuration.GetValue<string>("JWTSecret");
@@ -178,13 +186,15 @@ public class AuthController : ControllerBase
             );
             var accesToken = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
 
+            _logger.LogInformation("Refreshed acces token for user: " + _user.UserName);
+
             return Ok(new {
                 Token = accesToken,
             });
             
         }
 
-        return Unauthorized();
+        return Unauthorized("User not found");
     }
 
     [HttpPost("RemoveAllRefreshTokens")]
@@ -209,9 +219,6 @@ public class GebruikerLogin
 
 public class RefreshTokenRequest
 {
-    [Required(ErrorMessage = "Email is required")]
-    public string Email { get; init; } = null!; 
-
     [Required(ErrorMessage = "RefreshToken is required")]
     public string RefreshToken { get; init; } = null!;
 }
