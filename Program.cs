@@ -30,6 +30,7 @@ builder.Services.AddAuthentication(opt =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = "https://localhost:7047",
         ValidAudience = "https://localhost:7047",
+        ClockSkew = TimeSpan.Zero,
         IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWTSecret"]))
     };
 });

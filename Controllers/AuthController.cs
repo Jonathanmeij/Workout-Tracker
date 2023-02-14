@@ -148,11 +148,24 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("refresh")]
-    [Authorize]
     public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequest refreshTokenRequest)
     {
-        var _user = await _userManager.FindByNameAsync(User!.Identity!.Name);
-        
+        //get name from jwt token
+        string? nameClaim = null;
+        try {
+            var jwtToken = new JwtSecurityToken(refreshTokenRequest.Token);
+            nameClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value;
+
+        } catch (Exception e) {
+            return Unauthorized("Token not valid");
+        }
+
+        if (nameClaim == null) {
+            return Unauthorized("Name claim not found");
+        }
+
+        var _user = await _userManager.FindByNameAsync(nameClaim);
+
         if (_user != null)
         {
             var refreshToken = _context.RefreshTokens.FirstOrDefault(x => x.GebruikerId == _user.Id);
@@ -197,6 +210,7 @@ public class AuthController : ControllerBase
         return Unauthorized("User not found");
     }
 
+
     [HttpPost("RemoveAllRefreshTokens")]
     [Authorize(Roles = "Admin")]
     public IActionResult RemoveAllRefreshTokens()
@@ -221,5 +235,7 @@ public class RefreshTokenRequest
 {
     [Required(ErrorMessage = "RefreshToken is required")]
     public string RefreshToken { get; init; } = null!;
+    [Required(ErrorMessage = "Token is required")]
+    public string Token { get; init; } = null!;
 }
 

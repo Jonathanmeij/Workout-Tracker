@@ -234,3 +234,4 @@ appsettings.json
 database.db-wal
 database.db-shm
 database.db
+appsettings.json
