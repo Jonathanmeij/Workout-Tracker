@@ -93,7 +93,7 @@ public class AuthController : ControllerBase
                     issuer: "https://localhost:7047",
                     audience: "https://localhost:7047",
                     claims: claims,
-                    expires: DateTime.Now.AddMinutes(60),
+                    expires: DateTime.Now.AddMinutes(1),
                     signingCredentials: signingCredentials
                 );
                 var accesToken = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
@@ -133,8 +133,6 @@ public class AuthController : ControllerBase
 
                 var refreshTokenMinutes = Convert.ToInt32(refreshTokenExpiryTime.Subtract(DateTime.Now).TotalMinutes);
                 var accesTokenMinutes = 60;
-
-                _logger.LogInformation("refresh token: " + TokenUnHashed);
                 
                 return Ok(new {
                     Token = accesToken,
@@ -194,7 +192,7 @@ public class AuthController : ControllerBase
                 issuer: "https://localhost:7047",
                 audience: "https://localhost:7047",
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(60),
+                expires: DateTime.Now.AddMinutes(1),
                 signingCredentials: signingCredentials
             );
             var accesToken = new JwtSecurityTokenHandler().WriteToken(tokenOptions);

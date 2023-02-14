@@ -2,7 +2,7 @@ import axios from "axios";
 import { createRefresh } from "react-auth-kit";
 
 const refreshApi = createRefresh({
-    interval: 60,
+    interval: 0.5,
     refreshApiCallback: ({
         authToken,
         refreshToken,
@@ -10,21 +10,25 @@ const refreshApi = createRefresh({
         authTokenExpireAt,
         refreshTokenExpiresAt,
     }) => {
-        const yourConfig = {
-            headers: {
-                Authorization: "bearer " + authToken,
-            },
-        };
-        const request = {
-            refreshToken: refreshToken,
-        };
+        // const yourConfig = {
+        //     headers: {
+        //         Authorization: "bearer " + authToken,
+        //     },
+        // };
+        // const request = {
+        //     refreshToken: refreshToken,
+        // };
         return axios
-            .post("/api/auth/refresh", request, yourConfig)
+            .post("/api/auth/refresh", {
+                refreshToken: refreshToken,
+                token: authToken,
+            })
             .then(({ data }) => {
+                console.log(data);
                 return {
                     isSuccess: true,
                     newAuthToken: data.refreshToken,
-                    // newAuthTokenExpireAt: authTokenExpireAt,
+                    newAuthTokenExpireAt: 1,
                     // refreshTokenExpiresA: refreshTokenExpiresAt,
                 };
             })
