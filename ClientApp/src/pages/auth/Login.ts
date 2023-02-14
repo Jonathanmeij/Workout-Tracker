@@ -21,7 +21,7 @@ export const login = async (setError, email, wachtwoord, signIn) => {
             if (
                 await signIn({
                     token: response.data.token,
-                    expiresIn: 60,
+                    expiresIn: 1,
                     tokenType: "Bearer",
                     authState: { email: email },
                     refreshToken: response.data.refreshToken,
