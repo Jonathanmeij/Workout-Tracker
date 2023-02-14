@@ -37,6 +37,7 @@ public class RollenController : ControllerBase
             CreateRole(roleManager, roleName);
         }
 
+        // not the final admin user name and password
         string adminUserName = "admin@mail.com";
         string adminPwd = "SterkWachtwoord!1";
 
