@@ -23,7 +23,7 @@ public class AccountController: ControllerBase
 
     [HttpDelete]
     [Route("delete/{id}")]
-    [Authorize(Roles = "Admin")]
+    [Authorize (Roles = "Administrator")]
     public async Task<ActionResult> Delete(string id)
     {
         var gebruiker = await _userManager.FindByIdAsync(id);
