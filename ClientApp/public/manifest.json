@@ -1,6 +1,6 @@
 {
-    "short_name": "Workout_Track_app",
-    "name": "Workout_Track_app",
+    "short_name": "Workout tracker",
+    "name": "Workout tracker",
     "icons": [
         {
             "src": "favicon.ico",
