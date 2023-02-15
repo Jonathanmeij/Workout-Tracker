@@ -93,7 +93,7 @@ public class AuthController : ControllerBase
                     issuer: "https://localhost:7047",
                     audience: "https://localhost:7047",
                     claims: claims,
-                    expires: DateTime.Now.AddMinutes(1),
+                    expires: DateTime.Now.AddMinutes(60),
                     signingCredentials: signingCredentials
                 );
                 var accesToken = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
@@ -192,7 +192,7 @@ public class AuthController : ControllerBase
                 issuer: "https://localhost:7047",
                 audience: "https://localhost:7047",
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(1),
+                expires: DateTime.Now.AddMinutes(60),
                 signingCredentials: signingCredentials
             );
             var accesToken = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
