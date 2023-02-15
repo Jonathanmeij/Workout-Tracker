@@ -86,6 +86,37 @@ public class ExerciseController : ControllerBase {
 
         return CreatedAtAction("GetExercise", new { id = exercise.Id }, exercise);
     }
+
+    [HttpDelete("{id}")]
+    [Authorize]
+    public IActionResult DeleteExercise(int id) {
+        var username = User?.Identity?.Name;
+
+        if (username == null) {
+            return Unauthorized();
+        }
+
+        var gebruiker = _context.Gebruikers.FirstOrDefault(g => g.UserName == username);
+
+        if (gebruiker == null) {
+            return Unauthorized("User not found");
+        }
+
+        var exercise = _context.Exercises.Where(e => e.Id == id).Include(e => e.Workout).ThenInclude(w => w.Gebruiker).FirstOrDefault();
+
+        if (exercise == null) {
+            return NotFound();
+        }
+
+        if (exercise.Workout.Gebruiker.Id != gebruiker.Id) {
+            return Unauthorized("User is not allowed to delete exercises from this workout");
+        }
+
+        _context.Exercises.Remove(exercise);
+        _context.SaveChanges();
+
+        return Ok();
+    }
 }
 
 public class ExerciseDto {
