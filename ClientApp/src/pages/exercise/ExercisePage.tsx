@@ -1,9 +1,9 @@
 import TopBar from "../../components/TopBar";
 import { Box, Button, Card, Container, Divider, Input } from "../../components/ui";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import TitledList from "../../components/TitledList";
 import { useMutation, useQuery } from "react-query";
-import { getWorkouts } from "../../services/workoutsFetch";
+import { deleteExercise, getWorkouts } from "../../services/workoutsFetch";
 import { useAuthHeader } from "react-auth-kit";
 import { dateToString } from "../../services/DateTimeConverter";
 import { useForm } from "react-hook-form";
@@ -14,6 +14,7 @@ export default function ExercisePage() {
     const { exerciseId } = useParams<{ exerciseId: string }>();
     const { id } = useParams<{ id: string }>();
     const authHeader = useAuthHeader();
+    const navigate = useNavigate();
 
     const editFunction = () => {
         console.log("Edit");
@@ -26,6 +27,21 @@ export default function ExercisePage() {
             query.refetch();
         },
     });
+
+    const deleteMutation = useMutation(
+        (data: any) => deleteExercise(data, authHeader()),
+        {
+            onSuccess: () => {
+                query.refetch();
+            },
+        }
+    );
+
+    function deleteFunction() {
+        navigate("/workout/" + id);
+        deleteMutation.mutate(exerciseId);
+        console.log("Delete");
+    }
 
     if (query.isLoading) {
         return <div>Loading...</div>;
@@ -46,12 +62,14 @@ export default function ExercisePage() {
                 <div className="flex flex-col gap-3 my-4">
                     <TopBar
                         to={"/workout/" + id}
-                        title={"Exercise " + exerciseId}
+                        title={exercise?.name ?? "Exercise"}
                         editFunction={editFunction}
+                        deleteFunction={deleteFunction}
+                        deleteItem={exercise?.name}
                     />
                     <Card className="w-full max-w-lg">
                         <Box className="flex flex-col justify-center w-full gap-4">
-                            <h2 className="text-xl font-semibold ">Exercise name</h2>
+                            <h2 className="text-xl font-semibold ">{exercise?.name}</h2>
                             <p className="text-sm">Graph here</p>
                         </Box>
                     </Card>
