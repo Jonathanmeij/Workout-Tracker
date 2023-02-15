@@ -10,11 +10,16 @@ interface DeleteModalProps {
 }
 
 export function DeleteModal({ isOpen, setIsOpen, item, onDelete }: DeleteModalProps) {
+    function handleDelete() {
+        onDelete();
+        setIsOpen(false);
+    }
+
     return (
         <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
             <ModalHeader>Delete {item}</ModalHeader>
             <ModalBody>
-                <p className="text-sm text-gray-500">
+                <p className="text-white text-md">
                     Are you sure you want to delete {item}?
                 </p>
             </ModalBody>
@@ -22,7 +27,7 @@ export function DeleteModal({ isOpen, setIsOpen, item, onDelete }: DeleteModalPr
                 <Button color="secondary" onClick={() => setIsOpen(false)}>
                     Cancel
                 </Button>
-                <Button color="danger" onClick={onDelete}>
+                <Button color="danger" onClick={handleDelete}>
                     Delete
                 </Button>
             </ModalFooter>
@@ -34,7 +39,7 @@ export function DeleteButton({ item, onDelete }: { item: string; onDelete: () =>
     const [isOpen, setIsOpen] = useState(false);
     return (
         <>
-            <Button color="danger" onClick={() => setIsOpen(true)}>
+            <Button color="none" onClick={() => setIsOpen(true)}>
                 <DeleteOutlineOutlinedIcon />
             </Button>
             <DeleteModal

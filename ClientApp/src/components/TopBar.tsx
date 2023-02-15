@@ -1,17 +1,22 @@
 import { Button, Divider } from "./ui";
 import ArrowBackIosNewOutlinedIcon from "@mui/icons-material/ArrowBackIosNewOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import { DeleteButton } from "./DeleteModal";
 
 export default function TopBar({
     title,
     to,
     children,
     editFunction,
+    deleteFunction,
+    deleteItem,
 }: {
     title: string;
     to: string;
     children?: React.ReactNode;
     editFunction?: () => void;
+    deleteFunction?: () => void;
+    deleteItem?: string;
 }) {
     return (
         <>
@@ -21,11 +26,16 @@ export default function TopBar({
                 </Button>
                 <div className="flex items-center justify-between w-full">
                     <h1 className="text-2xl font-semibold">{title}</h1>
-                    {editFunction && (
-                        <Button onClick={editFunction}>
-                            <EditOutlinedIcon />
-                        </Button>
-                    )}
+                    <div>
+                        {deleteFunction && deleteItem && (
+                            <DeleteButton item={deleteItem} onDelete={deleteFunction} />
+                        )}
+                        {editFunction && (
+                            <Button onClick={editFunction}>
+                                <EditOutlinedIcon />
+                            </Button>
+                        )}
+                    </div>
                 </div>
             </div>
             <Divider />

@@ -10,20 +10,21 @@ import {
 } from "../../components/ui";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import TitledList from "../../components/TitledList";
 import { useMutation, useQuery } from "react-query";
 import { getWorkouts } from "../home/getWorkouts";
 import { useAuthHeader } from "react-auth-kit";
 import EmptyList from "../../components/EmptyList";
 import TextCard from "../../components/TextCard";
-import { postExercise } from "../../services/workoutsFetch";
+import { deleteWorkout, postExercise } from "../../services/workoutsFetch";
 
 export default function WorkoutPage() {
     const [isOpen, setisOpen] = useState(false);
     const { id } = useParams<{ id: string }>();
     const idInt = id ? parseInt(id) : 0;
     const authHeader = useAuthHeader();
+    const navigate = useNavigate();
 
     const editFunction = () => {
         console.log("Edit");
@@ -36,6 +37,18 @@ export default function WorkoutPage() {
             query.refetch();
         },
     });
+
+    const mutations2 = useMutation((data: any) => deleteWorkout(data, authHeader()), {
+        onSuccess: () => {
+            query.refetch();
+        },
+    });
+
+    function onDelete() {
+        navigate("/");
+        mutations2.mutate(idInt);
+        console.log("Delete");
+    }
 
     const workout = query.data?.data.find((workout) => workout.id === idInt);
     const exercises = workout?.exercises;
@@ -52,7 +65,13 @@ export default function WorkoutPage() {
         <div className="max-w-lg mx-auto">
             <Container>
                 <div className="flex flex-col gap-3 my-4">
-                    <TopBar to="/" title={workout.name} editFunction={editFunction} />
+                    <TopBar
+                        deleteFunction={onDelete}
+                        deleteItem={workout?.name}
+                        to="/"
+                        title={workout.name}
+                        editFunction={editFunction}
+                    />
                     <TitledList hasAddButton title="Exercises" setisOpen={setisOpen}>
                         {exercises.length === 0 ? (
                             <EmptyList item="exercise" setIsOpen={setisOpen} />
