@@ -138,6 +138,41 @@ public class SessionController : ControllerBase {
         return NoContent();
     }
 
+    [HttpDelete("{id}")]
+    [Authorize]
+    public async Task<IActionResult> DeleteSession(int id)
+    {
+        var username = User?.Identity?.Name;
+
+        if (username == null) {
+            return Unauthorized("User not found");
+        }
+
+        var gebruiker = _context.Gebruikers.FirstOrDefault(g => g.UserName == username);
+
+        if (gebruiker == null) {
+            return Unauthorized("User not found");
+        }
+
+        var session = await _context.Sessions
+            .Include(s => s.Exercise)
+            .ThenInclude(e => e.Workout)
+            .ThenInclude(w => w.Gebruiker)
+            .FirstOrDefaultAsync(s => s.Id == id);
+
+        if (session == null) {
+            return NotFound("Session not found");
+        }
+
+        if (session.Exercise.Workout.Gebruiker.Id != gebruiker.Id) {
+            return Unauthorized("User is not allowed to delete this session");
+        }
+
+        _context.Sessions.Remove(session);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
 }
 
 public class SessionReturnDto

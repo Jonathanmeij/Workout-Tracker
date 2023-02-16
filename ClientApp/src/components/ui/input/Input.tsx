@@ -7,6 +7,7 @@ interface InputProps {
     register: any;
     options?: any;
     fullWidth?: boolean;
+    defaultValue?: string;
 }
 
 export function Input({
@@ -18,11 +19,13 @@ export function Input({
     name,
     options,
     fullWidth,
+    defaultValue,
 }: InputProps) {
     return (
         <div className="flex flex-col w-full ">
             <label className="text-sm text-gray-400">{placeholder}</label>
             <input
+                defaultValue={defaultValue}
                 type={type}
                 {...register(name, {
                     ...options,

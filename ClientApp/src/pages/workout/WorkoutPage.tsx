@@ -17,7 +17,12 @@ import { getWorkouts } from "../home/getWorkouts";
 import { useAuthHeader } from "react-auth-kit";
 import EmptyList from "../../components/EmptyList";
 import TextCard from "../../components/TextCard";
-import { deleteWorkout, postExercise } from "../../services/workoutsFetch";
+import {
+    deleteWorkout,
+    postExercise,
+    putExercise,
+    putWorkout,
+} from "../../services/workoutsFetch";
 
 export default function WorkoutPage() {
     const [isOpen, setisOpen] = useState(false);
@@ -25,6 +30,7 @@ export default function WorkoutPage() {
     const idInt = id ? parseInt(id) : 0;
     const authHeader = useAuthHeader();
     const navigate = useNavigate();
+    const [editIsOpen, setEditIsOpen] = useState(false);
 
     const editFunction = () => {
         console.log("Edit");
@@ -39,6 +45,12 @@ export default function WorkoutPage() {
     });
 
     const mutations2 = useMutation((data: any) => deleteWorkout(data, authHeader()), {
+        onSuccess: () => {
+            query.refetch();
+        },
+    });
+
+    const mutations3 = useMutation((data: any) => putWorkout(data, authHeader()), {
         onSuccess: () => {
             query.refetch();
         },
@@ -70,7 +82,7 @@ export default function WorkoutPage() {
                         deleteItem={workout?.name}
                         to="/"
                         title={workout.name}
-                        editFunction={editFunction}
+                        setEditIsOpen={setEditIsOpen}
                     />
                     <TitledList hasAddButton title="Exercises" setisOpen={setisOpen}>
                         {exercises.length === 0 ? (
@@ -93,6 +105,12 @@ export default function WorkoutPage() {
                 isOpen={isOpen}
                 setisOpen={setisOpen}
                 id={idInt}
+            />
+            <EditWorkoutModal
+                workout={workout}
+                isOpen={editIsOpen}
+                setIsOpen={setEditIsOpen}
+                mutations={mutations3}
             />
         </div>
     );
@@ -164,6 +182,85 @@ function AddExerciseButton({
     );
 }
 
+type Workout = {
+    id: number;
+    name: string;
+    exercises: Exercise[];
+};
+
+type Exercise = {
+    id: number;
+    name: string;
+};
+
+function EditWorkoutModal({
+    isOpen,
+    setIsOpen,
+    workout,
+    mutations,
+}: {
+    isOpen: boolean;
+    setIsOpen: (value: boolean) => void;
+    workout: Workout;
+    mutations: any;
+}) {
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm();
+
+    const editFunction = (data) => {
+        const workoutData = {
+            id: workout.id,
+            name: data.name,
+        };
+        console.log(workoutData);
+        mutations.mutate(workoutData);
+        setIsOpen(false);
+    };
+
+    return (
+        <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+            <form>
+                <ModalHeader>Edit Workout</ModalHeader>
+                <ModalBody>
+                    <Input
+                        name="name"
+                        placeholder={"Workout Name"}
+                        error={errors.name?.message?.toString()}
+                        register={register}
+                        fullWidth
+                        defaultValue={workout.name}
+                        options={{
+                            required: {
+                                value: true,
+                                message: "Workout name is required",
+                            },
+                        }}
+                    />
+                </ModalBody>
+                <ModalFooter>
+                    <Button
+                        type="button"
+                        color="secondary"
+                        onClick={() => setIsOpen(false)}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        onClick={handleSubmit(editFunction)}
+                        type="submit"
+                        color="primary"
+                        padding="normal"
+                    >
+                        Save
+                    </Button>
+                </ModalFooter>
+            </form>
+        </Modal>
+    );
+}
 // type Exercise = {
 //     id: number;
 //     name: string;
