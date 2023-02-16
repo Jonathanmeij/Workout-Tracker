@@ -97,6 +97,47 @@ public class SessionController : ControllerBase {
 
         return CreatedAtAction("GetSession", new { id = session.Id }, session);
     }
+
+    [HttpPut("{id}")]
+    [Authorize]
+    public async Task<IActionResult> PutSession(int id, SessionPutDto sessionPutDto)
+    {
+        var username = User?.Identity?.Name;
+
+        if (username == null) {
+            return Unauthorized("User not found");
+        }
+
+        var gebruiker = _context.Gebruikers.FirstOrDefault(g => g.UserName == username);
+
+        if (gebruiker == null) {
+            return Unauthorized("User not found");
+        }
+
+        var session = await _context.Sessions
+            .Include(s => s.Exercise)
+            .ThenInclude(e => e.Workout)
+            .ThenInclude(w => w.Gebruiker)
+            .FirstOrDefaultAsync(s => s.Id == id);
+
+        if (session == null) {
+            return NotFound("Session not found");
+        }
+
+        if (session.Exercise.Workout.Gebruiker.Id != gebruiker.Id) {
+            return Unauthorized("User is not allowed to edit this session");
+        }
+
+        session.Weight = sessionPutDto.Weight;
+        session.Reps = sessionPutDto.Reps;
+        session.Sets = sessionPutDto.Sets;
+
+        _context.Sessions.Update(session);
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
 }
 
 public class SessionReturnDto
@@ -110,6 +151,12 @@ public class SessionReturnDto
 
 public class SessionDto {
     public int ExerciseId { get; set; }
+    public int Weight { get; set; }
+    public int Reps { get; set; }
+    public int Sets { get; set; }
+}
+
+public class SessionPutDto {
     public int Weight { get; set; }
     public int Reps { get; set; }
     public int Sets { get; set; }
