@@ -27,6 +27,15 @@ export function deleteWorkout(workoutId, token) {
     return axios.delete(`/api/workout/${workoutId}`, yourConfig);
 }
 
+export function putWorkout(workout, token) {
+    const yourConfig = {
+        headers: {
+            Authorization: token,
+        },
+    };
+    return axios.put(`/api/workout/${workout.id}`, workout, yourConfig);
+}
+
 export function postExercise(exercise, token) {
     const yourConfig = {
         headers: {
@@ -43,6 +52,15 @@ export function deleteExercise(exerciseId, token) {
         },
     };
     return axios.delete(`/api/exercise/${exerciseId}`, yourConfig);
+}
+
+export function putExercise(exercise, token) {
+    const yourConfig = {
+        headers: {
+            Authorization: token,
+        },
+    };
+    return axios.put(`/api/exercise/${exercise.id}`, exercise, yourConfig);
 }
 
 export function getWorkouts(userToken: string) {

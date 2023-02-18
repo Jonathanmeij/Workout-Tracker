@@ -1,24 +1,33 @@
 import TopBar from "../../components/TopBar";
-import { Box, Button, Card, Container, Divider, Input } from "../../components/ui";
+import {
+    Box,
+    Button,
+    Card,
+    Container,
+    Divider,
+    Input,
+    Modal,
+    ModalBody,
+    ModalFooter,
+    ModalHeader,
+} from "../../components/ui";
 import { useNavigate, useParams } from "react-router-dom";
 import TitledList from "../../components/TitledList";
 import { useMutation, useQuery } from "react-query";
-import { deleteExercise, getWorkouts } from "../../services/workoutsFetch";
+import { deleteExercise, getWorkouts, putExercise } from "../../services/workoutsFetch";
 import { useAuthHeader } from "react-auth-kit";
 import { dateToString } from "../../services/DateTimeConverter";
 import { useForm } from "react-hook-form";
 import { postSession } from "../../services/workoutsFetch";
 import EmptyList from "../../components/EmptyList";
+import { useState } from "react";
 
 export default function ExercisePage() {
     const { exerciseId } = useParams<{ exerciseId: string }>();
     const { id } = useParams<{ id: string }>();
     const authHeader = useAuthHeader();
     const navigate = useNavigate();
-
-    const editFunction = () => {
-        console.log("Edit");
-    };
+    const [editIsOpen, setEditIsOpen] = useState(false);
 
     const query = useQuery("workouts", () => getWorkouts(authHeader()));
 
@@ -36,6 +45,12 @@ export default function ExercisePage() {
             },
         }
     );
+
+    const editMutation = useMutation((data: any) => putExercise(exercise, authHeader()), {
+        onSuccess: () => {
+            query.refetch();
+        },
+    });
 
     function deleteFunction() {
         navigate("/workout/" + id);
@@ -63,7 +78,7 @@ export default function ExercisePage() {
                     <TopBar
                         to={"/workout/" + id}
                         title={exercise?.name ?? "Exercise"}
-                        editFunction={editFunction}
+                        setEditIsOpen={setEditIsOpen}
                         deleteFunction={deleteFunction}
                         deleteItem={exercise?.name}
                     />
@@ -89,6 +104,12 @@ export default function ExercisePage() {
                     </TitledList>
                 </div>
             </Container>
+            <EditExerciseModal
+                isOpen={editIsOpen}
+                setIsOpen={setEditIsOpen}
+                mutations={editMutation}
+                exercise={exercise}
+            />
         </div>
     );
 }
@@ -203,3 +224,142 @@ function SessionAddCard({ mutation, exerciseId }: { mutation: any; exerciseId: s
         </Card>
     );
 }
+
+type Exercise = {
+    id: number;
+    name: string;
+};
+
+function EditExerciseModal({
+    isOpen,
+    setIsOpen,
+    exercise,
+    mutations,
+}: {
+    isOpen: boolean;
+    setIsOpen: (value: boolean) => void;
+    exercise: Exercise;
+    mutations: any;
+}) {
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm();
+
+    const editFunction = (data) => {
+        const exerciseData = {
+            id: exercise.id,
+            name: data.name,
+        };
+        console.log(exerciseData);
+        mutations.mutate(exerciseData);
+        setIsOpen(false);
+    };
+
+    return (
+        <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+            <form>
+                <ModalHeader>Edit Exercise</ModalHeader>
+                <ModalBody>
+                    <Input
+                        type="text"
+                        register={register}
+                        defaultValue={exercise.name}
+                        name="name"
+                        placeholder="Name"
+                        fullWidth
+                        error={errors.name?.message?.toString()}
+                        options={{
+                            required: {
+                                value: true,
+                            },
+                        }}
+                    />
+                </ModalBody>
+                <ModalFooter>
+                    <Button
+                        color="secondary"
+                        onClick={() => setIsOpen(false)}
+                        className="mr-2"
+                    >
+                        Cancel
+                    </Button>
+                    <Button color="primary" onClick={handleSubmit(editFunction)}>
+                        Save
+                    </Button>
+                </ModalFooter>
+            </form>
+        </Modal>
+    );
+}
+
+// unction EditWorkoutModal({
+//     isOpen,
+//     setIsOpen,
+//     workout,
+//     mutations,
+// }: {
+//     isOpen: boolean;
+//     setIsOpen: (value: boolean) => void;
+//     workout: Workout;
+//     mutations: any;
+// }) {
+//     const {
+//         register,
+//         handleSubmit,
+//         formState: { errors },
+//     } = useForm();
+
+//     const editFunction = (data) => {
+//         const workoutData = {
+//             id: workout.id,
+//             name: data.name,
+//         };
+//         console.log(workoutData);
+
+//         mutations.mutate(workoutData);
+//         setIsOpen(false);
+//     };
+
+//     return (
+//         <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
+//             <form>
+//                 <ModalHeader>Edit Workout</ModalHeader>
+//                 <ModalBody>
+//                     <Input
+//                         name="name"
+//                         placeholder={"Workout Name"}
+//                         error={errors.name?.message?.toString()}
+//                         register={register}
+//                         fullWidth
+//                         defaultValue={workout.name}
+//                         options={{
+//                             required: {
+//                                 value: true,
+//                                 message: "Workout name is required",
+//                             },
+//                         }}
+//                     />
+//                 </ModalBody>
+//                 <ModalFooter>
+//                     <Button
+//                         type="button"
+//                         color="secondary"
+//                         onClick={() => setIsOpen(false)}
+//                     >
+//                         Cancel
+//                     </Button>
+//                     <Button
+//                         onClick={handleSubmit(editFunction)}
+//                         type="submit"
+//                         color="primary"
+//                         padding="normal"
+//                     >
+//                         Save
+//                     </Button>
+//                 </ModalFooter>
+//             </form>
+//         </Modal>
+//     );
+// }
