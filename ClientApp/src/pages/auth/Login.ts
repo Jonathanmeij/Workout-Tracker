@@ -39,3 +39,18 @@ export const login = async (setError, email, wachtwoord, signIn) => {
         return false;
     }
 };
+
+// const postLogin = (email, wachtwoord) => {
+//     return axios
+//         .post("/api/auth/login", {
+//             email: email,
+//             password: wachtwoord,
+//         })
+//         .catch((err) => {
+//             console.log("err: ", err);
+//             const error = err.response.statusText;
+//             if (error === "Unauthorized") {
+//                 throw new Error("Verkeerde email of wachtwoord");
+//             }
+//         });
+// };

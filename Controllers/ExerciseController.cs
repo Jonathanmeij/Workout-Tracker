@@ -87,6 +87,46 @@ public class ExerciseController : ControllerBase {
         return CreatedAtAction("GetExercise", new { id = exercise.Id }, exercise);
     }
 
+    [HttpPut("{id}")]
+    [Authorize]
+    public async Task<IActionResult> PutExercise(int id, ExercisePutDto exercisePutDto) {
+        var username = User?.Identity?.Name;
+
+        if (username == null) {
+            return Unauthorized();
+        }
+
+        var gebruiker = _context.Gebruikers.FirstOrDefault(g => g.UserName == username);
+
+        if (gebruiker == null) {
+            return Unauthorized("User not found");
+        }
+
+        var exercise = await _context.Exercises.Where(e => e.Id == id)
+        .Include(e => e.Workout)
+        .ThenInclude(w => w.Gebruiker)
+        .FirstOrDefaultAsync();
+
+        if (exercise == null) {
+            return NotFound("Exercise not found");
+        }
+
+        if (exercisePutDto.Name.Length > 50) {
+            return BadRequest("Name is too long");
+        }
+
+        if (exercise.Workout.Gebruiker.Id != gebruiker.Id) {
+            return Unauthorized("User is not allowed to edit exercises from this workout");
+        }
+
+        exercise.Name = exercisePutDto.Name;
+
+        _context.Entry(exercise).State = EntityState.Modified;
+        await _context.SaveChangesAsync();
+
+        return NoContent();
+    }
+
     [HttpDelete("{id}")]
     [Authorize]
     public IActionResult DeleteExercise(int id) {
@@ -105,7 +145,7 @@ public class ExerciseController : ControllerBase {
         var exercise = _context.Exercises.Where(e => e.Id == id).Include(e => e.Workout).ThenInclude(w => w.Gebruiker).FirstOrDefault();
 
         if (exercise == null) {
-            return NotFound();
+            return NotFound("Exercise not found");
         }
 
         if (exercise.Workout.Gebruiker.Id != gebruiker.Id) {
@@ -122,4 +162,8 @@ public class ExerciseController : ControllerBase {
 public class ExerciseDto {
     public string Name { get; set; } = null!;
     public int WorkoutId { get; set; }
+}
+
+public class ExercisePutDto {
+    public string Name { get; set; } = null!;
 }

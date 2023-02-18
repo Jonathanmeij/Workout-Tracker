@@ -7,14 +7,14 @@ export default function TopBar({
     title,
     to,
     children,
-    editFunction,
+    setEditIsOpen,
     deleteFunction,
     deleteItem,
 }: {
     title: string;
     to: string;
     children?: React.ReactNode;
-    editFunction?: () => void;
+    setEditIsOpen?: (isOpen: boolean) => void;
     deleteFunction?: () => void;
     deleteItem?: string;
 }) {
@@ -30,8 +30,8 @@ export default function TopBar({
                         {deleteFunction && deleteItem && (
                             <DeleteButton item={deleteItem} onDelete={deleteFunction} />
                         )}
-                        {editFunction && (
-                            <Button onClick={editFunction}>
+                        {setEditIsOpen && (
+                            <Button onClick={() => setEditIsOpen(true)}>
                                 <EditOutlinedIcon />
                             </Button>
                         )}
