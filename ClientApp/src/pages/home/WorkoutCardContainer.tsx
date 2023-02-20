@@ -51,7 +51,9 @@ export default function WorkoutCardContainer() {
                 ) : (
                     workouts.map((workout) => (
                         <Link key={workout.id} to={`/workout/${workout.id}`}>
-                            <TextCard>{workout.name}</TextCard>
+                            <TextCard>
+                                <h2 className="text-lg font-medium">{workout.name}</h2>
+                            </TextCard>
                         </Link>
                     ))
                 )}

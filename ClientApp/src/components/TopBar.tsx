@@ -6,22 +6,22 @@ import { DeleteButton } from "./DeleteModal";
 export default function TopBar({
     title,
     to,
-    children,
     setEditIsOpen,
     deleteFunction,
     deleteItem,
+    onClick,
 }: {
     title: string;
     to: string;
-    children?: React.ReactNode;
     setEditIsOpen?: (isOpen: boolean) => void;
     deleteFunction?: () => void;
     deleteItem?: string;
+    onClick?: () => void;
 }) {
     return (
         <>
             <div className="flex items-center">
-                <Button to={to}>
+                <Button to={to} onClick={onClick}>
                     <ArrowBackIosNewOutlinedIcon />
                 </Button>
                 <div className="flex items-center justify-between w-full">

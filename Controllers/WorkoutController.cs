@@ -26,7 +26,7 @@ public class WorkoutController : ControllerBase {
         var workouts = _context.Workouts
             .Where(w => w.Gebruiker.UserName == username)
             .Include(w => w.Exercises)
-                .ThenInclude(e => e.Sessions)
+                .ThenInclude(e => e.Sessions.OrderByDescending(s => s.Date))
             .ToList();
         return Ok(workouts);
     }

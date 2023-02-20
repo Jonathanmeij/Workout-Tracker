@@ -55,6 +55,8 @@ export function deleteExercise(exerciseId, token) {
 }
 
 export function putExercise(exercise, token) {
+    console.log(exercise);
+
     const yourConfig = {
         headers: {
             Authorization: token,
@@ -70,4 +72,13 @@ export function getWorkouts(userToken: string) {
         },
     };
     return axios.get("/api/workout", yourConfig);
+}
+
+export function deleteSession(sessionId, token) {
+    const yourConfig = {
+        headers: {
+            Authorization: token,
+        },
+    };
+    return axios.delete(`/api/session/${sessionId}`, yourConfig);
 }
