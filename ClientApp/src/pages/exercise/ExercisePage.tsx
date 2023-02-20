@@ -11,7 +11,7 @@ import {
     ModalFooter,
     ModalHeader,
 } from "../../components/ui";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import TitledList from "../../components/TitledList";
 import { useMutation, useQuery } from "react-query";
 import { deleteExercise, getWorkouts, putExercise } from "../../services/workoutsFetch";
@@ -21,6 +21,7 @@ import { useForm } from "react-hook-form";
 import { postSession } from "../../services/workoutsFetch";
 import EmptyList from "../../components/EmptyList";
 import { useState } from "react";
+import TextCard from "../../components/TextCard";
 
 export default function ExercisePage() {
     const { exerciseId } = useParams<{ exerciseId: string }>();
@@ -97,7 +98,9 @@ export default function ExercisePage() {
                             <>
                                 <Divider />
                                 {sessions.map((session) => (
-                                    <SessionTextCard key={session.id} session={session} />
+                                    <Link to={"/session/" + session.id}>
+                                        <SessionTextCard session={session} />
+                                    </Link>
                                 ))}
                             </>
                         )}
@@ -125,8 +128,8 @@ interface Session {
 
 function SessionTextCard({ session }: { session: Session }) {
     return (
-        <Card className="w-full max-w-lg">
-            <div className="flex items-center justify-between w-full gap-4 p-3">
+        <TextCard>
+            <div className="flex items-center justify-between w-full gap-4">
                 <div className="flex flex-col gap-1">
                     <p className="text-sm text-gray-400">Weight</p>
                     <h3>
@@ -141,7 +144,7 @@ function SessionTextCard({ session }: { session: Session }) {
                     {dateToString(session.date)}
                 </h2>
             </div>
-        </Card>
+        </TextCard>
     );
 }
 

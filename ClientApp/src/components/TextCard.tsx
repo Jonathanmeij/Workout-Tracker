@@ -4,8 +4,8 @@ import ArrowForwardIosOutlinedIcon from "@mui/icons-material/ArrowForwardIosOutl
 function WorkoutCard({ children }: { children: React.ReactNode }) {
     return (
         <Card className="w-full max-w-lg">
-            <Box className="flex justify-between w-full gap-4">
-                <h2 className="text-lg font-medium ">{children}</h2>
+            <Box className="flex items-center justify-between w-full gap-4">
+                {children}
                 <ArrowForwardIosOutlinedIcon />
             </Box>
         </Card>

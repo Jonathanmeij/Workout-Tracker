@@ -93,7 +93,11 @@ export default function WorkoutPage() {
                                     key={exercise.id}
                                     to={`/workout/${id}/${exercise.id}`}
                                 >
-                                    <TextCard>{exercise.name}</TextCard>
+                                    <TextCard>
+                                        <h2 className="text-lg font-medium">
+                                            {exercise.name}
+                                        </h2>
+                                    </TextCard>
                                 </Link>
                             ))
                         )}
