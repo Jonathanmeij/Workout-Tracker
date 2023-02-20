@@ -155,6 +155,7 @@ public class AuthController : ControllerBase
             nameClaim = jwtToken.Claims.FirstOrDefault(c => c.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name")?.Value;
 
         } catch (Exception e) {
+            _logger.LogError(e, "Error while getting name claim from jwt token");
             return Unauthorized("Token not valid");
         }
 
