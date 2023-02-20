@@ -13,7 +13,7 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import TitledList from "../../components/TitledList";
 import { useMutation, useQuery } from "react-query";
-import { getWorkouts } from "../home/getWorkouts";
+import { getWorkouts } from "../../services/workoutsFetch";
 import { useAuthHeader } from "react-auth-kit";
 import EmptyList from "../../components/EmptyList";
 import TextCard from "../../components/TextCard";
@@ -91,7 +91,7 @@ export default function WorkoutPage() {
                             exercises.map((exercise) => (
                                 <Link
                                     key={exercise.id}
-                                    to={`/workout/${id}/${exercise.id}`}
+                                    to={`/workout/${id}/exercise/${exercise.id}`}
                                 >
                                     <TextCard>
                                         <h2 className="text-lg font-medium">

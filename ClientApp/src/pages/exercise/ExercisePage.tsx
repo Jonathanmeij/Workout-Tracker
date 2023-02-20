@@ -47,7 +47,7 @@ export default function ExercisePage() {
         }
     );
 
-    const editMutation = useMutation((data: any) => putExercise(exercise, authHeader()), {
+    const editMutation = useMutation((data: any) => putExercise(data, authHeader()), {
         onSuccess: () => {
             query.refetch();
         },
@@ -98,7 +98,17 @@ export default function ExercisePage() {
                             <>
                                 <Divider />
                                 {sessions.map((session) => (
-                                    <Link to={"/session/" + session.id}>
+                                    <Link
+                                        key={session.id}
+                                        to={
+                                            "/workout/" +
+                                            id +
+                                            "/exercise/" +
+                                            exerciseId +
+                                            "/session/" +
+                                            session.id
+                                        }
+                                    >
                                         <SessionTextCard session={session} />
                                     </Link>
                                 ))}
@@ -161,6 +171,8 @@ function SessionAddCard({ mutation, exerciseId }: { mutation: any; exerciseId: s
             sets: data.sets,
             exerciseId: parseInt(exerciseId),
         };
+        console.log(sessionData);
+
         mutation.mutate(sessionData);
     };
 
