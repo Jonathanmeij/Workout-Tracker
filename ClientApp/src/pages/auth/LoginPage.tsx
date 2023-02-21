@@ -15,12 +15,15 @@ export default function LoginPage() {
     } = useForm();
     const onSubmit = (data) => handleLogin(data);
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const signIn = useSignIn();
 
     const handleLogin = async (data) => {
         try {
+            setLoading(true);
             if (await login(setError, data.email, data.password, signIn)) {
+                setLoading(false);
                 navigate("/");
             }
         } catch (error) {
@@ -71,7 +74,7 @@ export default function LoginPage() {
                         <Link to="/forgot-password">Forgot password?</Link>
 
                         <Button type="submit" color="primary" fullWidth>
-                            Login
+                            {loading ? <Spinner /> : "Login"}
                         </Button>
 
                         <Button to="/register" color="none" padding="small">
@@ -81,5 +84,20 @@ export default function LoginPage() {
                 </form>
             </div>
         </CenterCardPage>
+    );
+}
+
+function Spinner() {
+    return (
+        <div className="flex items-center justify-center">
+            <div
+                className="inline-block h-6 w-6 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
+                role="status"
+            >
+                <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+                    Loading...
+                </span>
+            </div>
+        </div>
     );
 }
