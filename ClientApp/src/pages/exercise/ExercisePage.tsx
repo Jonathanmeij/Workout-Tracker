@@ -282,7 +282,7 @@ function EditExerciseModal({
 
     return (
         <Modal isOpen={isOpen} setIsOpen={setIsOpen}>
-            <form>
+            <form onSubmit={handleSubmit(editFunction)}>
                 <ModalHeader>Edit Exercise</ModalHeader>
                 <ModalBody>
                     <Input
