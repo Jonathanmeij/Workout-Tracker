@@ -22,6 +22,7 @@ import { postSession } from "../../services/workoutsFetch";
 import EmptyList from "../../components/EmptyList";
 import { useState } from "react";
 import TextCard from "../../components/TextCard";
+import Chart from "./Chart";
 
 export default function ExercisePage() {
     const { exerciseId } = useParams<{ exerciseId: string }>();
@@ -72,6 +73,13 @@ export default function ExercisePage() {
     const exercise = workout?.exercises.find((e) => e.id === parseInt(exerciseId!));
     const sessions = exercise?.sessions ?? [];
 
+    const chartData = sessions.map((session) => {
+        return {
+            name: dateToString(session.date),
+            value: session.weight,
+        };
+    });
+
     return (
         <div className="max-w-lg mx-auto">
             <Container>
@@ -84,9 +92,9 @@ export default function ExercisePage() {
                         deleteItem={exercise?.name}
                     />
                     <Card className="w-full max-w-lg">
-                        <Box className="flex flex-col justify-center w-full gap-4">
-                            <h2 className="text-xl font-semibold ">{exercise?.name}</h2>
-                            <p className="text-sm">Graph here</p>
+                        <Box className="flex flex-col justify-center w-full h-64 gap-4">
+                            <h2 className="text-xl font-semibold ">Chart</h2>
+                            <Chart data={chartData.reverse()} />
                         </Box>
                     </Card>
                     <TitledList title="Sessions" hasAddButton={false}>
