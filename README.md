@@ -15,9 +15,9 @@ https://workouttrack.azurewebsites.net
 * Authentication with persistent login
 * Track weights for every exercise per session
 * Create, edit and delete workouts, exercises and sessions
+* Progress chart
 
 ### coming soon
 * Account page
-* Progress graph
 * demo mode (preview the app without an account)
 * (maybe) Localstorage option instead of account
